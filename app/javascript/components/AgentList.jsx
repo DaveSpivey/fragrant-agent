@@ -5,27 +5,92 @@ class AgentList extends React.Component {
 
 	constructor(props) {
 		super(props);
+
+		this.state = { agentAvatars: [] }
+
 		this.getAgentResults = this.getAgentResults.bind(this);
+		this.fetchAvatars = this.fetchAvatars.bind(this);
+	}
+
+	componentDidMount() {
+		// Once we've mounted the component, grab avatars all at once, depending on agent count
+		if (this.props.agents && this.props.agents.length) {
+			this.fetchAvatars(this.props.agents.length);
+		}
+	}
+
+	fetchAvatars(count) {
+		fetch(`https://randomuser.me/api/?results=${count}`, {
+	      	headers: {
+	        	'Accept': 'application/json',
+	        	'Content-Type': 'application/json'
+	      	},
+	      	method: 'GET'
+	    })
+	    .then((response) => response.json())
+	    .then((data) => {
+	      	if (data && data.results) {
+	      		// Keep avatar data in local state for cards to access
+	        	this.setState({ agentAvatars: data.results });
+	      	} else {
+	        	console.warn("Ruh roh! No avatar data.");
+	      	}
+	    })
+	    .catch((error) => {
+	      	console.error(error);
+	    });
 	}
 
 	getAgentResults() {
-		console.log("this.props", this.props);
+		const avatars = this.state.agentAvatars;
+
 		const agents = this.props.agents ? this.props.agents.map((agent, index) => {
+			// Match agent in the list to avatar at same index in the avatar array
+			const agentPic = avatars[index] ? (
+				<div className="avatar-wrapper">
+					<img className="avatar" src={ avatars[index].picture.medium } alt="agent photo" />
+				</div>
+			) : null;
+
 			return (
 				<div key={ index } className="agent" data-agent-id={ agent.id }>
 					<div className="pi">
-        				<div className="name">{ agent.name }</div>
-        				<div className="brokerage">{ agent.brokerage }</div>
+						<div className="agent-profile">
+							{ agentPic }
+						</div>
+						<div className="agent-info">
+        					<div className="name">{ agent.name }</div>
+        					<div className="brokerage">{ agent.brokerage }</div>
+        				</div>
       				</div>
       				<div className="stats">
         				<div className="side-stats">
-          					<b>Side:</b>{ `Buyers: ${agent.agent_stat.buyers} Sellers: ${agent.agent_stat.sellers}` }
+          					<b>Side:</b>
+          					{
+          						` Buyers: ${agent.agent_stat.buyers} 
+          						Sellers: ${agent.agent_stat.sellers}` 
+          					}
         				</div>
 				        <div className="type-stats">
-				          	<b>Type:</b>{ `SFH: ${agent.agent_stat.sfh} Condo: ${agent.agent_stat.condo} Townhome: ${agent.agent_stat.townhome} Mobile: ${agent.agent_stat.mobile} Land: ${agent.agent_stat.land}` }
+				          	<b>Type:</b>
+				          	{ 
+				          		` SFH: ${agent.agent_stat.sfh} 
+				          	   	Condo: ${agent.agent_stat.condo} 
+			          	   		Townhome: ${agent.agent_stat.townhome} 
+				          	   	Mobile: ${agent.agent_stat.mobile} 
+				          	   	Land: ${agent.agent_stat.land}`
+				          	}
 				        </div>
 				        <div className="price-stats">
-				          	<b>Price:</b>{ `$0 - $150k: ${agent.agent_stat.pr1} $150k - $300k: ${agent.agent_stat.pr2} $300k - $500k: ${agent.agent_stat.pr3} $500k - $750k: ${agent.agent_stat.pr4} $750k - $1m: ${agent.agent_stat.pr5} $1m+: ${agent.agent_stat.pr6}` }
+				          	<b>Price:</b>
+				          	{
+				          		` $0 - $150k: ${agent.agent_stat.pr1} 
+				          		$150k - $300k: ${agent.agent_stat.pr2} 
+				          		$300k - $500k: ${agent.agent_stat.pr3} 
+				          		$500k - $750k: ${agent.agent_stat.pr4} 
+				          		$750k - $1m: ${agent.agent_stat.pr5} 
+				          		$1m+: ${agent.agent_stat.pr6}`
+				          	}
 				        </div>
 			      	</div>
 				</div>

@@ -4,30 +4,7 @@
   </header>
 
   <main>
-    <% agent_list = @agents.map do |agent| %>
-      <% { %>
-        <% d: agent.id, %>
-        <% name: agent.name, %>
-        <% brokerage: agent.brokerage, %>
-        <% agent_stat: { %>
-          <% buyers: agent.agent_stat.buyers, %>
-          <% sellers: agent.agent_stat.sellers, %>
-          <% sfh: agent.agent_stat.sfh, %>
-          <% condo: agent.agent_stat.condo, %>
-          <% townhome: agent.agent_stat.townhome, %>
-          <% mobile: agent.agent_stat.mobile, %>
-          <% land: agent.agent_stat.land, %>
-          <% pr1: agent.agent_stat.pr1, %>
-          <% pr2: agent.agent_stat.pr2, %>
-          <% pr3: agent.agent_stat.pr3, %>
-          <% pr4: agent.agent_stat.pr4, %>
-          <% pr5: agent.agent_stat.pr5, %>
-          <% pr6: agent.agent_stat.pr6 %>
-        <% } %>
-      <% } %>
-    <% end %> 
-
-    <%= react_component("AgentList", { agents: agent_list, search: @search }) %>
+    <%= react_component("AgentList", { agents: @agents, search: @search }) %>
   </main>
 
   <footer>

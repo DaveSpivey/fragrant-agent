@@ -39,18 +39,45 @@ main {
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 
       .pi {
+        display: flex;
+        align-items: center;
         margin-bottom: 2rem;
 
-        .name {
-          padding: 0.5rem 0 0.25rem;
-          font-size: 1.125rem;
-          font-weight: 500;
-          color: #444;
+        .agent-profile {
+          display: inline-block;
+
+          .avatar-wrapper {
+            background-color: #1EA9F0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+
+            .avatar {
+              transform: scale(1.2);
+              border-radius: 50%;
+            }
+          }
         }
 
-        .brokerage {
-          font-size: 0.875rem;
-          color: #888;
+        .agent-info {
+          display: inline-block;
+
+          .name {
+            padding: 0.5rem 0 0.25rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #444;
+          }
+
+          .brokerage {
+            font-size: 0.875rem;
+            color: #888;
+          }
         }
       }
 
