@@ -8,8 +8,36 @@ main {
     overflow: auto;
   }
 
-  .search-results-message {
-    padding-left: 1rem;
+  .search-filters {
+    padding: 0 1rem;
+
+    .filter-form, .current-filters-message, .filter-clear-button {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+
+    .customer-filter {
+      vertical-align: top;
+    }
+
+    .property-filter {
+      border-left: solid 1px #CCCCCC;
+      padding-left: 0.5rem;
+    }
+
+    .filter-clear-button {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 2px;
+      border: none;
+      background-color: #337AB7;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #4394CE;
+      }
+    }
   }
 
   .agent-list {

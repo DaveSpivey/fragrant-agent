@@ -6,10 +6,21 @@ class AgentList extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { agentAvatars: [] }
+		this.state = { 
+			agentAvatars: [],
+			customerFilter: "",
+			propertyFilter: ""
+		};
 
+		// Bind class methods once on init
 		this.getAgentResults = this.getAgentResults.bind(this);
 		this.fetchAvatars = this.fetchAvatars.bind(this);
+		this.filterAgents = this.filterAgents.bind(this);
+		this.renderSearchFilters = this.renderSearchFilters.bind(this);
+		this.changeCustomerFilter = this.changeCustomerFilter.bind(this);
+		this.changePropertyFilter = this.changePropertyFilter.bind(this);
+		this.getCurrentFiltersMessage = this.getCurrentFiltersMessage.bind(this);
+		this.clearFilters = this.clearFilters.bind(this);
 	}
 
 	componentDidMount() {
@@ -17,6 +28,115 @@ class AgentList extends React.Component {
 		if (this.props.agents && this.props.agents.length) {
 			this.fetchAvatars(this.props.agents.length);
 		}
+	}
+
+	filterAgents() {
+		const { agents } = this.props;
+		const { customerFilter, propertyFilter } = this.state;
+		let filteredAgents = agents;
+
+		// Filter first by customer type
+		if (customerFilter) {
+			filteredAgents = this.filterForTarget(filteredAgents, customerFilter);
+		}
+
+		// then by property type
+		if (propertyFilter) {
+			const target = propertyFilter === "luxury" ? "pr6" : propertyFilter
+			filteredAgents = this.filterForTarget(filteredAgents, target);
+		}
+
+		return filteredAgents;
+	}
+
+	// Sorts by filter type, descending, then arbitrarily returns the top half of the results
+	filterForTarget(agents, target) {
+		return agents.sort((agentA, agentB) => agentB.agent_stat[target] - agentA.agent_stat[target])
+					 .slice(0, agents.length / 2);
+	}
+
+	renderSearchFilters() {
+		const { customerFilter, propertyFilter } = this.state;
+  		const currentFiltersMessage = this.getCurrentFiltersMessage();
+
+		return (
+			<div className="search-filters">
+				<p className="filter-header">
+					Filter results by:
+				</p>
+				<form className="filter-form customer-filter">
+					<fieldset>
+						<input type="radio" 
+							   name="customer" 
+							   value="buyers" 
+							   checked={ customerFilter === "buyers" }
+							   onChange={ this.changeCustomerFilter } />
+						   	Buyers<br/>
+						<input type="radio" 
+							   name="customer" 
+							   value="sellers" 
+							   checked={ customerFilter === "sellers" }
+							   onChange={ this.changeCustomerFilter } />
+						   	Sellers
+					</fieldset>
+				</form>
+				<form className="filter-form property-filter">
+					<fieldset>
+						<input type="radio" 
+							   name="property" 
+							   value="sfh"
+							   checked={ propertyFilter === "sfh" }
+							   onChange={ this.changePropertyFilter } />
+						   	SFH<br/>
+  						<input type="radio" 
+  							   name="property" 
+  							   value="condo"
+							   checked={ propertyFilter === "condo" }
+							   onChange={ this.changePropertyFilter } />
+						    Condo<br/>
+						<input type="radio" 
+							   name="property" 
+							   value="luxury"
+							   checked={ propertyFilter === "luxury" }
+							   onChange={ this.changePropertyFilter } />
+						    Luxury
+					</fieldset>
+				</form>
+				{ currentFiltersMessage }
+			</div>
+		);
+	}
+
+	changeCustomerFilter(event) {
+		const filter = event.target.value;
+		this.setState({ customerFilter: filter });
+	}
+
+	changePropertyFilter(event) {
+		const filter = event.target.value;
+		this.setState({ propertyFilter: filter });
+	}
+
+	getCurrentFiltersMessage() {
+  		const { customerFilter, propertyFilter } = this.state;
+
+  		if (customerFilter || propertyFilter) {
+  			const filtersMessage = `Filtering for: ${customerFilter}${customerFilter && propertyFilter ? ", " : ""}${propertyFilter}`;
+  			const clearButton = <button className="filter-clear-button" onClick={ this.clearFilters }>Clear filters</button>;
+
+  			return (
+  				<div className="current-filters-message">
+  					<div className="filters-message-text">{ filtersMessage }</div>
+  					{ clearButton }
+  				</div>
+			);
+  		}
+
+  		return null;
+	}
+
+	clearFilters() {
+		this.setState({ customerFilter: "", propertyFilter: "" });
 	}
 
 	fetchAvatars(count) {
@@ -43,8 +163,9 @@ class AgentList extends React.Component {
 
 	getAgentResults() {
 		const avatars = this.state.agentAvatars;
+		const filteredAgents = this.props.agents ? this.filterAgents() : [];
 
-		const agents = this.props.agents ? this.props.agents.map((agent, index) => {
+		const agents = filteredAgents.map((agent, index) => {
 			// Match agent in the list to avatar at same index in the avatar array
 			const agentPic = avatars[index] ? (
 				<div className="avatar-wrapper">
@@ -95,7 +216,7 @@ class AgentList extends React.Component {
 			      	</div>
 				</div>
 			);
-		}) : [];
+		});
 
 		return (
 			<div className="agent-list">
@@ -106,12 +227,13 @@ class AgentList extends React.Component {
 
   	render () {
   		const { search } = this.props;
+
+  		const searchFilters = this.renderSearchFilters();
   		const agentResults = this.getAgentResults();
-  		const searchText = `You searched for ${search.txn_side} a ${search.prop_type} at ${search.price_range.replace(/to/g, " to ").replace(/1mp/g, "1m p")}`;
 
     	return (
       		<React.Fragment>
-      			<p className="search-results-message">{ searchText }</p>
+      			{ searchFilters }
         		{ agentResults }
       		</React.Fragment>
     );
@@ -124,7 +246,7 @@ AgentList.propTypes = {
   			id: PropTypes.number,
 	    	name: PropTypes.string,
 	    	brokerage: PropTypes.string,
-	    	stats: PropTypes.PropTypes.shape({
+	    	agent_stat: PropTypes.PropTypes.shape({
 	    		buyers: PropTypes.number,
 	    		sellers: PropTypes.number,
 	    		sfh: PropTypes.number,
@@ -137,7 +259,7 @@ AgentList.propTypes = {
 	    		pr3: PropTypes.number,
 	    		pr4: PropTypes.number,
 	    		pr5: PropTypes.number,
-	    		pr6: PropTypes.number,
+	    		pr6: PropTypes.number
 	    	})
 	  	})
 	),
