@@ -1,14 +1,16 @@
 # README
 
-Setup:
+Revised setup for exercise:
 
-git pull
+git clone
 
-cd find_an_agent/ruby
+cd fragrant-agent
 
 bundle
 
 rake db:create
+
+yarn install
 
 rake db:migrate
 
