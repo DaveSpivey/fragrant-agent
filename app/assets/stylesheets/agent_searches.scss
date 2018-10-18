@@ -1,22 +1,124 @@
+// Screen width variables
+$screen-large: 1072px;
+$screen-medium: 768px;
+
 main {
 
   #results {
     overflow: auto;
   }
 
-  .agent {
-    border: 1px solid #333;
-    margin: 10px;
-    overflow: auto;
-    padding: 10px;
+  .search-filters {
+    padding: 0 1rem;
 
-    .pi {
-      float: left;
-      width: 150px;
+    .filter-form, .current-filters-message, .filter-clear-button {
+      display: inline-block;
+      margin-right: 1rem;
     }
 
-    .stats {
-      float: left;
+    .customer-filter {
+      vertical-align: top;
+    }
+
+    .property-filter {
+      border-left: solid 1px #CCCCCC;
+      padding-left: 0.5rem;
+    }
+
+    .filter-clear-button {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 2px;
+      border: none;
+      background-color: #337AB7;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #4394CE;
+      }
+    }
+  }
+
+  .agent-list {
+    display: grid;
+    grid-gap: 1rem;
+    justify-items: center;
+    padding: 0.5rem;
+
+    // one column of cards on small screens
+    grid-template-columns: repeat(1, 1fr);
+    // two columns for medium
+    @media (min-width: $screen-medium) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    // three for any larger screens
+    @media (min-width: $screen-large) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .agent {
+      max-width: 24rem;
+      border-radius: 4px;
+      margin: 10px;
+      overflow: auto;
+      padding: 0.75rem;
+      background-color: #FFFFFF;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+      .pi {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .agent-profile {
+          display: inline-block;
+
+          .avatar-wrapper {
+            background-color: #1EA9F0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+
+            .avatar {
+              transform: scale(1.2);
+              border-radius: 50%;
+            }
+          }
+        }
+
+        .agent-info {
+          display: inline-block;
+
+          .name {
+            padding: 0.5rem 0 0.25rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #444;
+          }
+
+          .brokerage {
+            font-size: 0.875rem;
+            color: #888;
+          }
+        }
+      }
+
+      .stats {
+        height: 120px;
+        display: flex;
+        flex-direction: column;
+
+        > div {
+          flex: 1 1 auto;
+          font-size: 0.875rem;
+        }
+      }
     }
   }
 }

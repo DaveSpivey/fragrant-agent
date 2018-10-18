@@ -4,8 +4,7 @@
   </header>
 
   <main>
-    <p> You searched for <%= @search.txn_side %> a <%= @search.prop_type %> at <%= @search.price_range.gsub("to", " to ").gsub("1mp", "1m p") %></p>
-    <%= render partial: "agent_list" %>
+    <%= react_component("AgentList", { agents: @agents, search: @search }) %>
   </main>
 
   <footer>
