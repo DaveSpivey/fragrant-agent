@@ -24,8 +24,10 @@ http://localhost:3000
 ### Specific tasks are broken out by commit:
 
 Task 3 - commit: "Make agent result cards responsive"
+
 Task 2 - commit: "Add avatars as agent profile pics"
-Taks 7 - commit: "Add search filters to agent results page"
+
+Task 7 - commit: "Add search filters to agent results page"
 
 
 Growth Candidates:
